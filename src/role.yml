@@ -1,7 +1,7 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: web-edit-role-binding
+  name: web-dev
   namespace: web
 roleRef:
   kind: ClusterRole
@@ -10,4 +10,18 @@ roleRef:
 subjects:
 - apiGroup: rbac.authorization.k8s.io
   kind: User
-  name: webdev@OTAPRD276ops.onmicrosoft.com
+  name: webdev@msftopenhack7023ops.onmicrosoft.com
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: api-dev
+  namespace: api
+roleRef:
+  kind: ClusterRole
+  name: edit
+  apiGroup: rbac.authorization.k8s.io
+subjects:
+- apiGroup: rbac.authorization.k8s.io
+  kind: User
+  name: apidev@msftopenhack7023ops.onmicrosoft.com

@@ -24,17 +24,35 @@ az ad group create --display-name myAKSAdminGroup
 Done in Web Portal
 Name:  myManagedCluster
   
-az aks get-credentials --resource-group teamResources --name myManagedCluster
+az aks get-credentials --resource-group teamResources --name myManagedCluster --overwrite-existing
 az aks update -n myManagedCluster -g teamResources --attach-acr registryefd3942
 kubectl create namespace web
 kubectl create namespace api
+
+kubectl create secret generic sql-info --namespace api \
+  --from-literal=SQL_SERVER=sqlserverefd3942.database.windows.net \
+  --from-literal=SQL_USER=sqladmineFd3942 \
+  --from-literal=SQL_PASSWORD='dL4jp2Ip7' \
+  --from-literal=SQL_DBNAME=mydrivingDB
+  
 kubectl apply -f poi.yml --namespace api
-kubectl apply -f trips.yml --namespace api
 kubectl apply -f user-java.yaml --namespace api
 kubectl apply -f userprofile.yml --namespace api
+kubectl apply -f trips.yml --namespace api
 kubectl apply -f tripviewer.yml --namespace web
 
 
+ADD EKS-Managed Azure AD
+az aks update -g MyResourceGroup -n MyManagedCluster --enable-aad --aad-admin-group-object-ids <id-1> [--aad-tenant-id <id>]
+
+
+
+
+curl -i -X GET 'http://localhost/api/user-java/healthcheck'
+
+
+kubectl get pods --namespace api
+kubectl exec -i -t --namespace=api user-java-5cf5969df-v294v sh
 
 ************************************************************************************
 Challenge 3
