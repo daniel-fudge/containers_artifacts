@@ -6,6 +6,36 @@ Name:      Hacker One
 User Name: hacker15do@msftopenhack7023ops.onmicrosoft.com
 Password:  4Jr*(6kzr
 
+SQLName: sqlserverefd3942.database.windows.net
+Registry Name: registryefd3942
+Resource Group: teamResources
+Cluster Name: myAKSCluster
+
+
+************************************************************************************
+Challenge 4
+************************************************************************************
+
+SETUP Azure AD
+# Create an Azure AD group
+az ad group create --display-name myAKSAdminGroup
+
+# Create an AKS-managed Azure AD cluster
+Done in Web Portal
+Name:  myManagedCluster
+  
+az aks get-credentials --resource-group teamResources --name myManagedCluster
+az aks update -n myManagedCluster -g teamResources --attach-acr registryefd3942
+kubectl create namespace web
+kubectl create namespace api
+kubectl apply -f poi.yml --namespace api
+kubectl apply -f trips.yml --namespace api
+kubectl apply -f user-java.yaml --namespace api
+kubectl apply -f userprofile.yml --namespace api
+kubectl apply -f tripviewer.yml --namespace web
+
+
+
 ************************************************************************************
 Challenge 3
 ************************************************************************************
@@ -17,14 +47,12 @@ INSTALL Kubectl and Connect to AKS Cluster
 sudo az aks install-cli
 az aks get-credentials --resource-group teamResources --name myAKSCluster
 
-
 CONNECT ACR with AKS
 az aks update -n myAKSCluster -g teamResources --attach-acr registryefd3942
 
 MAKE NAMESPACE
 kubectl create namespace web
 kubectl create namespace api
-
 
 SECRETS:
 Azure SQL FDQN: sqlserverefd3942.database.windows.net
@@ -41,19 +69,6 @@ kubectl create secret generic sql-info --namespace api \
   
 DEPLOY IMAGE to Cluster
 kubectl apply -f poi.yml --namespace api
-
-
-
-
-
-SQLName: sqlserverefd3942.database.windows.net
-Registry Name: registryefd3942
-Resource Group: teamResources
-Cluster Name: myAKSCluster
-
-
-
-
 
 ************************************************************************************
 Challenge 2
