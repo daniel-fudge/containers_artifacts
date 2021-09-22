@@ -24,9 +24,9 @@ spec:
           value: '80'
         - name: DEBUG_LOGGING
           value: 'true
-      envFrom:
-        - secretRef:
-            name: sql-info
+        envFrom:
+          - secretRef:
+             name: sql-info
 ---
 apiVersion: v1
 kind: Service
