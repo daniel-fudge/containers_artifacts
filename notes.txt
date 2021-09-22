@@ -1,0 +1,96 @@
+user name: 87262-78bb3-4@skillmeup.com
+password: Password123!
+
+Asure
+Name:      Hacker One
+User Name: hacker15do@msftopenhack7023ops.onmicrosoft.com
+Password:  4Jr*(6kzr
+
+************************************************************************************
+Challenge 3
+************************************************************************************
+
+CREATE AKS Cluster
+az aks create --resource-group teamResources --name myAKSCluster --node-count 2 --enable-addons monitoring --generate-ssh-keys
+
+INSTALL Kubectl and Connect to AKS Cluster
+sudo az aks install-cli
+az aks get-credentials --resource-group teamResources --name myAKSCluster
+
+
+CONNECT ACR with AKS
+az aks update -n myAKSCluster -g teamResources --attach-acr registryefd3942
+
+MAKE NAMESPACE
+kubectl create namespace web
+kubectl create namespace api
+
+
+SECRETS:
+Azure SQL FDQN: sqlserverefd3942.database.windows.net
+Azure SQL Server User: sqladmineFd3942
+Azure SQL Server Pass: dL4jp2Ip7
+Azure SQL Server Database: mydrivingDB
+
+kubectl create secret generic sql-info --namespace api \
+  --from-literal=SQL_SERVER=sqlserverefd3942.database.windows.net \
+  --from-literal=SQL_USER=sqladmineFd3942 \
+  --from-literal=SQL_PASSWORD='dL4jp2Ip7' \
+  --from-literal=SQL_DBNAME=mydrivingDB
+  
+  
+DEPLOY IMAGE to Cluster
+kubectl apply -f poi.yml --namespace api
+
+
+
+
+
+SQLName: sqlserverefd3942.database.windows.net
+Registry Name: registryefd3942
+Resource Group: teamResources
+Cluster Name: myAKSCluster
+
+
+
+
+
+************************************************************************************
+Challenge 2
+************************************************************************************
+CONTAINER INFO:
+CONTAINER ID   IMAGE                                        COMMAND                  CREATED         STATUS         PORTS                                       NAMES
+cee0c2ee424f   tripinsights/poi:1.0                         "dotnet poi.dll"         9 seconds ago   Up 7 seconds   0.0.0.0:8080->80/tcp, :::8080->80/tcp       poi
+51a1f93b5e0f   mcr.microsoft.com/mssql/server:2017-latest   "/opt/mssql/bin/nonr…"   2 hours ago     Up 2 hours     0.0.0.0:1433->1433/tcp, :::1433->1433/tcp   sqltestdb
+
+RUN SQL:
+docker run -d --network oh-network -e ACCEPT_EULA=Y -e SA_PASSWORD=localtestpw123@ --name sqltestdb -p 1433:1433 mcr.microsoft.com/mssql/server:2017-latest
+
+INSTALL DB:
+sudo docker exec -it sqltestdb "bash"
+/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P localtestpw123@
+CREATE DATABASE mydrivingDB
+curl -i -X GET 'http://localhost:8080/api/poi' 
+
+RUN APPS:
+docker run -d --network oh-network --name poi         -p 8080:80 -e SQL_PASSWORD=localtestpw123@ -e SQL_SERVER=sqltestdb -e SQL_USER=sa -e ASPNETCORE_ENVIRONMENT=Local tripinsights/poi:1.0
+docker run -d --network oh-network --name trips       -p 8080:80 -e SQL_PASSWORD=localtestpw123@ -e SQL_SERVER=sqltestdb -e SQL_USER=sa -e ASPNETCORE_ENVIRONMENT=Local tripinsights/trips:1.0
+docker run -d --network oh-network --name userprofile -p 8080:80 -e SQL_PASSWORD=localtestpw123@ -e SQL_SERVER=sqltestdb -e SQL_USER=sa                                 tripinsights/userprofile:1.0 
+
+LOAD DATA:
+docker run --network oh-network --name dataload               -e SQLFQDN=sqltestdb -e SQLUSER=sa -e SQLPASS=localtestpw123@ -e SQLDB=mydrivingDB openhack/data-load:v1
+
+ACR BUILD:
+ACR_NAME=registryefd3942
+RES_GROUP=$ACR_NAME # Resource Group name
+az group create --resource-group $RES_GROUP --location eastus
+az acr create --resource-group $RES_GROUP --name $ACR_NAME --sku Standard --location eastus
+
+az acr build -r registryefd3942 -t tripinsights/user-java:1.0 .
+
+
+
+
+
+
+
