@@ -16,7 +16,7 @@ spec:
       - name: poi
         image: registryefd3942.azurecr.io/tripinsights/poi:1.0
         ports:
-        - containerPort: 8080
+        - containerPort: 80
         env:
         - name: WEB_SERVER_BASE_URI
           value: 'http://0.0.0.0'
@@ -38,5 +38,5 @@ spec:
   ports:
     - protocol: TCP
       port: 80
-      targetPort: 8080
+      targetPort: 80
   type: ClusterIP
