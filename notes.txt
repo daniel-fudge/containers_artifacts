@@ -11,6 +11,8 @@ Registry Name: registryefd3942
 Resource Group: teamResources
 Cluster Name: myManagedCluster
 Key Vault Name: kv-oh42
+http://13.64.22.129/
+
 
 azureKeyvaultSecretsProvider
 "client"Id": "4dc1b2a8-fda8-4afc-a880-2d7502808d05",
@@ -18,9 +20,9 @@ azureKeyvaultSecretsProvider
 "resourceId": "/subscriptions/6f05caef-84fb-4b9d-a2a8-e4df3386ecfb/resourcegroups/MC_teamResources_myManagedCluster_westus/providers/Microsoft.ManagedIdentity/userAssignedIdentities/azurekeyvaultsecretsprovider-mymanagedcluster"
 
 kubectl apply -f poi.yml --namespace api
-kubectl apply -f user-java.yaml --namespace api
+kubectl apply -f user-java.yml --namespace api
 kubectl apply -f userprofile.yml --namespace api
-kubectl apply -f trip.yml --namespace api
+kubectl apply -f trips.yml --namespace api
 kubectl apply -f tripviewer.yml --namespace web
 
 poi: 			Daniel
@@ -59,6 +61,16 @@ az keyvault set-policy -n kv-oh42 --secret-permissions get --spn 4dc1b2a8-fda8-4
 
 az aks pod-identity list --cluster-name myManagedCluster --resource-group teamResources
 kubectl apply -f secret.yml --namespace api
+
+CREATE NGINX Controler
+NAMESPACE=ingress-basic
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+helm repo update
+helm install ingress-nginx ingress-nginx/ingress-nginx --create-namespace --namespace $NAMESPACE
+kubectl --namespace ingress-basic get services -o wide -w ingress-nginx-controller
+
+kubectl apply -f route-web.yml --namespace web
+kubectl apply -f route-api.yml --namespace api
 
 
 ************************************************************************************
