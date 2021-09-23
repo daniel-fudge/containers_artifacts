@@ -24,9 +24,17 @@ spec:
           value: '80'
         - name: DEBUG_LOGGING
           value: 'true'
-        envFrom:
-        - secretRef:
-            name: sql-info
+        volumeMounts:
+        - name: kv-oh42-mnt
+          mountPath: "/secrets"
+          readOnly: true
+        volumes:
+        - name: kv-oh42-mnt
+          csi:
+            driver: secrets-store.csi.k8s.io
+            readOnly: true
+            volumeAttributes:
+              secretProviderClass: kv-oh42
 ---
 apiVersion: v1
 kind: Service
