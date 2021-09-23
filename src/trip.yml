@@ -28,7 +28,7 @@ spec:
         - name: kv-oh42-mnt
           mountPath: "/secrets"
           readOnly: true
-        volumes:
+      volumes:
         - name: kv-oh42-mnt
           csi:
             driver: secrets-store.csi.k8s.io
