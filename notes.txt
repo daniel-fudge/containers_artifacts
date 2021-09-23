@@ -20,7 +20,7 @@ azureKeyvaultSecretsProvider
 kubectl apply -f poi.yml --namespace api
 kubectl apply -f user-java.yaml --namespace api
 kubectl apply -f userprofile.yml --namespace api
-kubectl apply -f trips.yml --namespace api
+kubectl apply -f trip.yml --namespace api
 kubectl apply -f tripviewer.yml --namespace web
 
 poi: 			Daniel
