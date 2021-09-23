@@ -23,6 +23,12 @@ kubectl apply -f userprofile.yml --namespace api
 kubectl apply -f trips.yml --namespace api
 kubectl apply -f tripviewer.yml --namespace web
 
+poi: 			Daniel
+trips: 			Randy
+tripviewer:	  	Charlie
+java-user: 		Luca
+user-profile: 	Al
+
 		
 ************************************************************************************
 Challenge 5
