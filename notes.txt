@@ -9,7 +9,50 @@ Password:  4Jr*(6kzr
 SQLName: sqlserverefd3942.database.windows.net
 Registry Name: registryefd3942
 Resource Group: teamResources
-Cluster Name: myAKSCluster
+Cluster Name: myManagedCluster
+Key Vault Name: kv-oh42
+
+azureKeyvaultSecretsProvider
+"client"Id": "4dc1b2a8-fda8-4afc-a880-2d7502808d05",
+"objectId": "671fe750-122c-43bc-92bb-bbef60d8e25e",
+"resourceId": "/subscriptions/6f05caef-84fb-4b9d-a2a8-e4df3386ecfb/resourcegroups/MC_teamResources_myManagedCluster_westus/providers/Microsoft.ManagedIdentity/userAssignedIdentities/azurekeyvaultsecretsprovider-mymanagedcluster"
+
+kubectl apply -f poi.yml --namespace api
+kubectl apply -f user-java.yaml --namespace api
+kubectl apply -f userprofile.yml --namespace api
+kubectl apply -f trips.yml --namespace api
+kubectl apply -f tripviewer.yml --namespace web
+
+		
+************************************************************************************
+Challenge 5
+************************************************************************************
+
+REGISTER AKS-AzureKeyVaultSecretsProvider preview feature
+az feature register --namespace "Microsoft.ContainerService" --name "AKS-AzureKeyVaultSecretsProvider"
+az feature list -o table --query "[?contains(name, 'Microsoft.ContainerService/AKS-AzureKeyVaultSecretsProvider')].{Name:name,State:properties.state}"
+az provider register --namespace Microsoft.ContainerService
+
+INSTALL aks-preview CLI extension
+az extension add --name aks-preview
+az extension update --name aks-preview
+
+UPGRADE CLUSTER with CSL Driver Support
+az aks enable-addons --addons azure-keyvault-secrets-provider --name myManagedCluster --resource-group teamResources
+kubectl get pods -n kube-system -l 'app in (secrets-store-csi-driver, secrets-store-provider-azure)'
+
+CREATE AZURE KEY VAULT
+az keyvault create -n kv-oh42 -g teamResources -l westus
+
+az keyvault secret set --vault-name kv-oh42 -n SQLSERVER   --value sqlserverefd3942.database.windows.net
+az keyvault secret set --vault-name kv-oh42 -n SQLUSER     --value sqladmineFd3942
+az keyvault secret set --vault-name kv-oh42 -n SQLPASSWORD --value 'dL4jp2Ip7'
+az keyvault secret set --vault-name kv-oh42 -n SQLDBNAME   --value mydrivingDB
+
+az keyvault set-policy -n kv-oh42 --secret-permissions get --spn 4dc1b2a8-fda8-4afc-a880-2d7502808d05
+
+az aks pod-identity list --cluster-name myManagedCluster --resource-group teamResources
+kubectl apply -f secret.yml --namespace api
 
 
 ************************************************************************************
